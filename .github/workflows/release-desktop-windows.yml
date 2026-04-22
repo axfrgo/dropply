@@ -1,0 +1,69 @@
+name: Release Desktop Windows
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Build desktop release
+        run: npm run tauri:build
+
+      - name: Generate checksums
+        shell: pwsh
+        run: ./scripts/generate-checksums.ps1
+
+      - name: Import code-signing certificate
+        shell: pwsh
+        run: |
+          if ("${{ secrets.WINDOWS_CERTIFICATE_BASE64 }}" -eq "" -or "${{ secrets.WINDOWS_CERTIFICATE_PASSWORD }}" -eq "") {
+            Write-Host "Code signing secrets missing. Skipping certificate import."
+            exit 0
+          }
+          $certBytes = [Convert]::FromBase64String("${{ secrets.WINDOWS_CERTIFICATE_BASE64 }}")
+          $certPath = Join-Path $env:RUNNER_TEMP "dropply-signing-cert.pfx"
+          [IO.File]::WriteAllBytes($certPath, $certBytes)
+          Import-PfxCertificate -FilePath $certPath -Password (ConvertTo-SecureString "${{ secrets.WINDOWS_CERTIFICATE_PASSWORD }}" -AsPlainText -Force) -CertStoreLocation Cert:\CurrentUser\My | Out-Null
+
+      - name: Sign Windows artifacts
+        shell: pwsh
+        run: |
+          if ("${{ secrets.WINDOWS_CERTIFICATE_BASE64 }}" -eq "" -or "${{ secrets.WINDOWS_CERTIFICATE_PASSWORD }}" -eq "") {
+            Write-Host "Code signing secrets missing. Skipping signing."
+            exit 0
+          }
+          $signtool = (Get-Command signtool.exe).Source
+          Get-ChildItem -Path "src-tauri\target\release\bundle\msi\*.msi", "src-tauri\target\release\bundle\nsis\*.exe" -ErrorAction SilentlyContinue | ForEach-Object {
+            & $signtool sign /fd SHA256 /td SHA256 /tr http://timestamp.digicert.com /a $_.FullName
+          }
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          tag="${{ github.ref_name }}"
+          gh release create "$tag" --title "$tag" --generate-notes || true
+          gh release upload "$tag" src-tauri/target/release/bundle/msi/*.msi src-tauri/target/release/bundle/nsis/*.exe src-tauri/target/release/bundle/SHA256SUMS.txt --clobber
