@@ -1,0 +1,15 @@
+node_modules/
+dist/
+target/
+src-tauri/target/
+.DS_Store
+Thumbs.db
+*.db
+*.db-shm
+*.db-wal
+app-data/
+*.log
+private-components/*/node_modules/
+private-components/*/.env
+private-components/*/.env.local
+private-components/*/.next/
