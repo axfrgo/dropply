@@ -6,8 +6,9 @@ The open-source core includes:
 
 - desktop app shell
 - local-first item storage
-- single-stream scratchpad workflow
-- import/export/delete item lifecycle
+- single-stream Smart Drops workflow
+- local Smart Drop metadata and deterministic classification
+- import/export/open/delete item lifecycle
 - pairing and sync foundations
 - self-hostable relay foundation
 
@@ -27,4 +28,3 @@ The proprietary layer is intended to include:
 
 - Open-source desktop core: public repository and community distribution
 - Proprietary cloud layer: separately deployed services and commercial agreements
-

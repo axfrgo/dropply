@@ -1,20 +1,24 @@
 # Dropply
 
-Dropply is a premium local-first shared scratchpad for text, files, images, and fast device handoff. The desktop app is built with Tauri, React, and Rust, with SQLite metadata storage, blob-backed local persistence, and sync foundations designed for WebRTC-first replication with relay fallback.
+Dropply is a premium local-first cross-device intent layer for text, files, images, links, and fast device handoff. The desktop app is built with Tauri, React, and Rust, with SQLite metadata storage, blob-backed local persistence, and sync foundations designed for WebRTC-first transfer with relay fallback.
+
+The v1 wedge is **Smart Drops**: every item in the stream can carry where it came from, a local label/summary, suggested next actions, target-device intent, and lifecycle state. Smart Drops are additive metadata on the existing Dropply stream, not a rebrand and not a cloud-AI dependency.
 
 ## Product
 
 - Drag in files, screenshots, images, and text
 - Type or paste directly into the built-in composer
-- Keep everything in one time-ordered stream
+- Keep everything in one time-ordered Smart Drops stream
+- See source context, local labels, tags, suggested actions, and lifecycle state
 - Export or delete items individually
 - Pair devices without accounts
+- Use the desktop app or the TUI/CLI companion for terminal-heavy workflows
 - Pin the desktop window on top when you want a persistent drop surface
 
 ## Repository layout
 
 - `src/`: React desktop UI
-- `src-tauri/`: Tauri host, Rust storage layer, commands, and desktop packaging config
+- `src-tauri/`: Tauri host, Rust storage layer, CLI/TUI, commands, and desktop packaging config
 - `relay-server/`: optional relay service foundation
 - `docs/`: release, security, and open-core documentation
 - `private-components/`: documentation-only placeholder for proprietary modules and hosted services
@@ -56,16 +60,19 @@ See [PRIVACY_POLICY.md](docs/PRIVACY_POLICY.md) and [TERMS_OF_SERVICE.md](docs/T
 Included:
 
 - polished premium desktop UI
-- local text/file/image capture
+- local Smart Drops for text, files, images, links, and browser bundles
+- source context, local labels/tags, suggested actions, and lifecycle state
 - SQLite + blob storage
-- item export and deletion
+- item open/copy/download/delete plus pending/completed/revoked intent updates
 - desktop always-on-top pin toggle
+- relay/direct Smart Drop metadata compatibility
+- companion CLI/TUI stream surface
 - Windows installer packaging
 
 Still in progress:
 
-- production-complete cross-device WebRTC sync
-- production-complete relay/cloud sync
+- automatic cross-device routing decisions
+- cloud AI summarization and comparison adapters
 - multi-stream workspaces
 - end-to-end hosted private tier
 

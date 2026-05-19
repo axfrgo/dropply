@@ -17,11 +17,12 @@
         "height": 900,
         "minWidth": 420,
         "minHeight": 620,
-        "resizable": true
+        "resizable": true,
+        "decorations": false
       }
     ],
     "security": {
-      "csp": "default-src 'self'; img-src 'self' asset: data: blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; script-src 'self'; connect-src 'self' ipc: http://ipc.localhost http://127.0.0.1:1420 ws://127.0.0.1:1420;",
+      "csp": "default-src 'self'; img-src 'self' asset: data: blob: https:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; script-src 'self'; connect-src 'self' ipc: http://ipc.localhost http://127.0.0.1:1420 ws://127.0.0.1:1420 https: wss: ws:;",
       "assetProtocol": {
         "enable": true,
         "scope": ["$APPDATA/dropply/**", "$APPLOCALDATA/dropply/**"]
@@ -37,15 +38,16 @@
       "icons/128x128.png",
       "icons/256x256.png"
     ],
-    "shortDescription": "Local-first shared scratchpad across devices",
-    "longDescription": "Dropply is a premium local-first shared scratchpad for text, files, and images with real-time sync foundations and desktop-first performance.",
+    "shortDescription": "Local-first Smart Drops across your devices",
+    "longDescription": "Dropply is a premium local-first cross-device intent layer for text, files, images, and links. Smart Drops keep source context, labels, suggested actions, lifecycle state, and desktop-first handoff performance.",
     "windows": {
       "nsis": {
         "installMode": "currentUser",
-        "languages": ["English"],
-        "displayLanguageSelector": false,
+        "languages": ["English", "French"],
+        "displayLanguageSelector": true,
         "headerImage": "icons/nsis-header.bmp",
-        "sidebarImage": "icons/nsis-sidebar.bmp"
+        "sidebarImage": "icons/nsis-sidebar.bmp",
+        "installerIcon": "icons/icon.ico"
       }
     }
   }

@@ -1,0 +1,62 @@
+Dropply CLI
+===========
+
+Dropply CLI is the advanced companion for fast device-to-device handoff and terminal-first Smart Drops.
+
+Quick start
+-----------
+
+1. Run `install-dropply-cli.cmd` from this folder once.
+2. Open a new PowerShell or Command Prompt window.
+3. Run `dropply-cli pair`.
+4. Scan the terminal QR code or use the printed pair URL to link the CLI into the same Dropply session as your desktop or browser.
+5. Send content:
+   - `dropply-cli send C:\path\to\file.ext`
+   - `dropply-cli send-text`
+   - `Get-Content .\notes.txt | dropply-cli send-text`
+6. Inspect and pull:
+   - `dropply-cli list`
+   - `dropply-cli pull`
+   - `dropply-cli status`
+   - `dropply-cli status --watch`
+   - `dropply-cli tui`
+
+TUI Smart Drops
+---------------
+
+The TUI is the terminal version of the Dropply desktop stream. It shows the same Smart Drop label, source, tags, and lifecycle state that the desktop card shows.
+
+Useful keys:
+
+- `o` opens the selected item
+- `m` marks the selected Smart Drop pending
+- `x` marks it completed
+- `v` revokes the Smart Drop intent without deleting the row
+- `/` searches across item names, text, labels, source context, and tags
+
+Transport preference
+--------------------
+
+Set the preferred transport label for the session:
+
+`dropply-cli transport --mode auto`
+`dropply-cli transport --mode p2p`
+`dropply-cli transport --mode relay`
+
+Completions
+-----------
+
+- The installer now sets up PowerShell completions for new terminal sessions automatically.
+- Manual script output is also available:
+  - `dropply-cli completions powershell`
+  - `dropply-cli completions bash`
+  - `dropply-cli completions zsh`
+
+Notes
+-----
+
+- CLI v1 uses the hosted relay session path for transfer orchestration.
+- The CLI keeps its own local Dropply cache under AppData and pairs into the same token when linked.
+- Smart Drop metadata is local-first and syncs through the same relay/direct item manifests as desktop and web.
+- Use `dropply-cli --json ...` for compact scripting output.
+- Run `uninstall-dropply-cli.cmd` if you want to remove the PATH setup later.

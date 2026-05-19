@@ -30,7 +30,7 @@ This is the practical path to make Dropply production-ready, downloadable, and p
 
 - Move hosted identity to Clerk in production.
 - Wire Clerk to Google OAuth, magic-link email flows, passkeys, and session management.
-- Set `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY`, and `CLERK_JWT_KEY` in production.
+- Set `VITE_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY`, and `CLERK_JWT_KEY` in production.
 - Store sessions securely with rotation, expiry, and revocation support.
 - Add CSRF protection where cookies are used.
 - Add per-endpoint rate limiting for auth, pairing, uploads, and relay traffic.
@@ -48,12 +48,14 @@ This is the practical path to make Dropply production-ready, downloadable, and p
 
 ## 6. Product Gaps To Finish
 
-- Complete real WebRTC sync instead of scaffolding.
-- Complete relay fallback with auth-bound access control.
+- Keep hardening WebRTC and relay sync under real-world network conditions.
+- Add auth-bound access control before marketing hosted relay as private cloud sync.
 - Complete actual account session handling on desktop, web, and mobile.
 - Add real device management, logout, and revoke-session flows.
 - Add update strategy for the desktop app.
 - Add deletion, export, and retention rules for hosted accounts.
+- Add optional cloud AI adapters only after Smart Drops are stable as local-first metadata.
+- Add automatic routing, version comparison, and project attachment after device presence is stronger.
 
 ## 7. Legal + Trust
 
@@ -72,7 +74,7 @@ This is the practical path to make Dropply production-ready, downloadable, and p
 
 ## 9. Recommended Near-Term Order
 
-1. Finish the Dropply rebrand in all shipped surfaces.
+1. Run the Smart Drops v1 release gate in [RELEASE.md](RELEASE.md).
 2. Split public core vs private hosted code clearly.
 3. Push the desktop core to GitHub.
 4. Deploy the private web app to Vercel.

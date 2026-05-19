@@ -4,22 +4,36 @@ version = "1.0.0"
 description = "Dropply desktop shell"
 authors = ["OpenAI"]
 edition = "2021"
+default-run = "dropply"
 
 [lib]
 name = "dropply_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
+[[bin]]
+name = "dropply"
+path = "src/main.rs"
+
+[[bin]]
+name = "dropply-cli"
+path = "src/bin/dropply-cli.rs"
+
 [build-dependencies]
 tauri-build = { version = "2.0.1", features = [] }
+
+[features]
+default = []
 
 [dependencies]
 anyhow = "1.0.93"
 arboard = "3.4.1"
 base64 = "0.22.1"
 chrono = { version = "0.4.38", features = ["serde"] }
+crossterm = "0.28.1"
 dirs = "5.0.1"
 futures-util = "0.3.31"
 rand = "0.8.5"
+ratatui = "0.29.0"
 rusqlite = { version = "0.32.1", features = ["bundled", "chrono"] }
 serde = { version = "1.0.214", features = ["derive"] }
 serde_json = "1.0.132"
@@ -27,8 +41,24 @@ sha2 = "0.10.8"
 tauri = { version = "2.0.6", features = ["protocol-asset"] }
 tauri-plugin-dialog = "2.0.4"
 tauri-plugin-fs = "2.0.4"
-tokio = { version = "1.41.1", features = ["fs", "macros", "rt-multi-thread", "sync", "time"] }
+tokio = { version = "1.41.1", features = ["fs", "io-util", "macros", "rt-multi-thread", "signal", "sync", "time"] }
 toml = "0.8.19"
+reqwest = { version = "0.12.9", default-features = false, features = ["json", "rustls-tls"] }
+qrcodegen = "1.8.0"
 uuid = { version = "1.11.0", features = ["v4", "serde"] }
 walkdir = "2.5.0"
 webbrowser = "1.0.3"
+zip = { version = "0.6.6", default-features = false, features = ["deflate"] }
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.61.2", features = [
+  "Win32_Foundation",
+  "Win32_System_Diagnostics_ToolHelp",
+] }
+
+[profile.release]
+opt-level = "s"      # Optimize for size
+lto = true           # Enable Link-Time Optimization
+codegen-units = 1    # Maximize compression
+strip = true         # Strip debug symbols
+

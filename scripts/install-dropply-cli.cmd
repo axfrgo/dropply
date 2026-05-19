@@ -1,0 +1,2 @@
+@echo off
+powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0install-dropply-cli.ps1"

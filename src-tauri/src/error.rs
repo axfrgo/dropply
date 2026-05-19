@@ -45,5 +45,10 @@ impl From<anyhow::Error> for AppError {
     }
 }
 
-pub type AppResult<T> = Result<T, AppError>;
+impl From<zip::result::ZipError> for AppError {
+    fn from(value: zip::result::ZipError) -> Self {
+        Self::Message(value.to_string())
+    }
+}
 
+pub type AppResult<T> = Result<T, AppError>;

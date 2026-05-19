@@ -11,6 +11,8 @@ export type CloudConfig = {
   auth_methods: string[];
   local_mode_requires_login: boolean;
   hosted_sync_requires_login: boolean;
+  hosted_sync_available: boolean;
+  auth_configured: boolean;
 };
 
 const CLOUD_API_BASE = "https://dropply-backend.fortifie.com";

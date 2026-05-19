@@ -1,0 +1,16 @@
+{
+  "name": "@dropply/fortistate-kernel",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
+    },
+    "./react": {
+      "types": "./react.d.ts",
+      "default": "./react.js"
+    }
+  }
+}

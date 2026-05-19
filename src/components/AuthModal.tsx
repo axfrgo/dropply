@@ -6,6 +6,7 @@ import {
   openHostedAuthPath,
   type CloudProvider,
 } from "../lib/cloud";
+import { useI18n } from "../lib/i18n";
 
 type AuthModalProps = {
   mode: "signin" | "signup";
@@ -14,18 +15,17 @@ type AuthModalProps = {
 };
 
 export function AuthModal({ mode, onClose, onOpenExternalUrl }: AuthModalProps) {
+  const { t } = useI18n();
   const [isOnline, setIsOnline] = useState(false);
   const [providers, setProviders] = useState<CloudProvider[]>([]);
-  const [notice, setNotice] = useState("Local mode needs no login. Sign in only for hosted sync.");
+  const [notice, setNotice] = useState(t("localNoLogin"));
+  const [authReady, setAuthReady] = useState(false);
   const [isBusy, setIsBusy] = useState(false);
 
-  const title = mode === "signup" ? "Create your cloud space" : "Sign in to Dropply";
+  const title = mode === "signup" ? t("cloudTitleSignup") : t("cloudTitleSignin");
   const subtitle = useMemo(
-    () =>
-      mode === "signup"
-        ? "Clerk-managed hosted auth unlocks web, mobile, and cloud sync without changing the local-first desktop flow."
-        : "Continue into Dropply Cloud for Google, email-link, and passkey sign-in.",
-    [mode]
+    () => (mode === "signup" ? t("cloudSubtitleSignup") : t("cloudSubtitleSignin")),
+    [mode, t]
   );
 
   useEffect(() => {
@@ -46,8 +46,14 @@ export function AuthModal({ mode, onClose, onOpenExternalUrl }: AuthModalProps) 
         }
 
         if (configResult.status === "fulfilled") {
+          const ready = Boolean(
+            configResult.value.auth_configured && configResult.value.hosted_sync_available
+          );
+          setAuthReady(ready);
           setNotice(
-            `${configResult.value.hosted_sync_requires_login ? "Hosted sync uses sign-in." : "Cloud sign-in is optional."} ${configResult.value.auth_provider === "clerk" ? "Clerk manages the hosted account flow." : ""}`.trim()
+            ready
+              ? `${configResult.value.hosted_sync_requires_login ? t("hostedSyncUsesSignin") : t("cloudSigninOptional")} ${configResult.value.auth_provider === "clerk" ? t("cloudManagedByClerk") : ""}`.trim()
+              : t("hostedAuthMissing")
           );
         }
       }
@@ -65,44 +71,52 @@ export function AuthModal({ mode, onClose, onOpenExternalUrl }: AuthModalProps) 
       isMounted = false;
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, [onClose]);
+  }, [onClose, t]);
 
   async function continueHosted(path: "/signin" | "/signup", label: string) {
+    if (!authReady) {
+      setNotice(t("hostedAuthDisabled"));
+      return;
+    }
+
     setIsBusy(true);
     try {
       const url = await openHostedAuthPath(path);
       await onOpenExternalUrl(url);
-      setNotice(`Opened Dropply Cloud ${label} in your browser.`);
+      setNotice(t("openedHostedAuth", { label }));
     } catch (error) {
-      setNotice(error instanceof Error ? error.message : "Hosted auth could not be opened.");
+      setNotice(error instanceof Error ? error.message : t("hostedAuthDisabled"));
     } finally {
       setIsBusy(false);
     }
   }
 
-  const providerSummary = providers.filter((provider) => provider.enabled).map((provider) => provider.label).join(", ");
+  const providerSummary = providers
+    .filter((provider) => provider.enabled)
+    .map((provider) => provider.label)
+    .join(", ");
 
   return (
     <div className="auth-modal-backdrop" role="presentation" onClick={onClose}>
       <section
         className="auth-modal"
-        aria-label={mode === "signup" ? "Create a Dropply account" : "Sign in to Dropply"}
+        aria-label={mode === "signup" ? t("cloudTitleSignup") : t("cloudTitleSignin")}
         onClick={(event) => event.stopPropagation()}
       >
         <div className="auth-modal-header">
           <div>
-            <p className="eyebrow">{mode === "signup" ? "Dropply Cloud" : "Welcome back"}</p>
+            <p className="eyebrow">{mode === "signup" ? t("cloudLabel") : t("welcomeBack")}</p>
             <h2>{title}</h2>
             <p className="auth-modal-copy">{subtitle}</p>
           </div>
           <button type="button" className="composer-tool" onClick={onClose}>
-            Close
+            {t("close")}
           </button>
         </div>
 
         <div className="auth-modal-status-row">
           <span className={`cloud-status ${isOnline ? "is-online" : "is-offline"}`}>
-            {isOnline ? "Backend online" : "Backend offline"}
+            {isOnline ? t("backendOnline") : t("backendOffline")}
           </span>
           <p className="auth-modal-note">{notice}</p>
         </div>
@@ -111,24 +125,29 @@ export function AuthModal({ mode, onClose, onOpenExternalUrl }: AuthModalProps) 
           <button
             type="button"
             className="composer-send"
-            onClick={() => void continueHosted(mode === "signup" ? "/signup" : "/signin", mode === "signup" ? "sign-up" : "sign-in")}
-            disabled={isBusy}
+            onClick={() =>
+              void continueHosted(
+                mode === "signup" ? "/signup" : "/signin",
+                mode === "signup" ? "sign-up" : "sign-in"
+              )
+            }
+            disabled={isBusy || !authReady}
           >
-            {mode === "signup" ? "Open sign up" : "Open sign in"}
+            {mode === "signup" ? t("openSignUp") : t("openSignIn")}
           </button>
           <button
             type="button"
             className="composer-tool"
             onClick={() => void continueHosted("/signin", "sign-in")}
-            disabled={isBusy}
+            disabled={isBusy || !authReady}
           >
-            Use hosted auth
+            {t("useHostedAuth")}
           </button>
         </div>
 
         <div className="auth-modal-provider-list">
-          <span className="auth-modal-provider-label">Available methods</span>
-          <p className="auth-modal-note">{providerSummary || "Google, email magic link, and passkeys."}</p>
+          <span className="auth-modal-provider-label">{t("availableMethods")}</span>
+          <p className="auth-modal-note">{providerSummary || t("methodsFallback")}</p>
         </div>
       </section>
     </div>

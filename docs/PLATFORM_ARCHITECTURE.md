@@ -8,7 +8,8 @@ Open-source core:
 
 - local-first desktop application
 - local storage and item lifecycle
-- single-stream scratchpad
+- single-stream Smart Drops workflow
+- local Smart Drop metadata and deterministic classification
 - local pairing groundwork
 - optional self-hosted relay foundation
 

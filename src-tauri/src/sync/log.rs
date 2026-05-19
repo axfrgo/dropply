@@ -31,9 +31,4 @@ impl LogStore {
         self.db.append_log(&entry)?;
         Ok(())
     }
-
-    pub fn pending(&self, limit: usize) -> AppResult<Vec<LogEntry>> {
-        self.db.pending_log_entries(limit)
-    }
 }
-

@@ -7,6 +7,8 @@ Use the public desktop core as the GitHub-facing repository and keep the hosted 
 - Public GitHub repo:
   - `src/`
   - `src-tauri/`
+  - `src-tauri/src/bin/dropply-cli.rs`
+  - `src-tauri/src/cli_tui.rs`
   - `docs/` for public desktop-core docs
   - desktop release workflows and scripts
 - Private repo or private workspace:
@@ -24,6 +26,13 @@ Run:
 ```
 
 This creates a sanitized copy of the repo that excludes local artifacts and the `private-components/` directory.
+It also strips the private-only `zenith-core` path dependency from the public `src-tauri/Cargo.toml`.
+
+To refresh the actual public GitHub repo from the sanitized copy:
+
+```powershell
+./scripts/sync-public-github-repo.ps1
+```
 
 ## Release path
 

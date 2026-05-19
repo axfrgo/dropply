@@ -1,16 +1,23 @@
 import { useEffect, useMemo, useState } from "react";
 import { open } from "@tauri-apps/plugin-dialog";
-import type { Item } from "../lib/types";
+import { confirmAction } from "../lib/confirm";
+import { useI18n } from "../lib/i18n";
+import type { IntentState, Item, SourceKind } from "../lib/types";
 import { ItemCard } from "./ItemCard";
 
 type CanvasProps = {
   items: Item[];
   isBusy: boolean;
-  onAddPaths: (paths: string[]) => Promise<void>;
-  onAddText: (text: string) => Promise<void>;
+  onAddPaths: (paths: string[], sourceKind?: SourceKind) => Promise<void>;
+  onAddText: (text: string, id?: string, sourceKind?: SourceKind) => Promise<void>;
+  onOpenBundleComposer: () => void;
   onCopyText: (itemId: string) => Promise<void>;
   onDeleteItem: (itemId: string) => Promise<void>;
-  onDownloadItem: (itemId: string, destinationPath: string) => Promise<void>;
+  onDeleteAllItems: () => Promise<void>;
+  onDownloadItem: (itemId: string) => Promise<void>;
+  onOpenItem: (itemId: string) => Promise<void>;
+  onUpdateIntentState: (itemId: string, intentState: IntentState) => Promise<void>;
+  canSendToDevice: boolean;
 };
 
 const VISIBLE_COUNT = 60;
@@ -20,12 +27,19 @@ export function Canvas({
   isBusy,
   onAddPaths,
   onAddText,
+  onOpenBundleComposer,
   onCopyText,
   onDeleteItem,
+  onDeleteAllItems,
   onDownloadItem,
+  onOpenItem,
+  onUpdateIntentState,
+  canSendToDevice,
 }: CanvasProps) {
+  const { t } = useI18n();
   const [isDragging, setIsDragging] = useState(false);
   const [draftText, setDraftText] = useState("");
+  const [draftSourceKind, setDraftSourceKind] = useState<SourceKind>("composer");
   const [composerMode, setComposerMode] = useState<"idle" | "typing">("idle");
 
   const visibleItems = useMemo(() => items.slice(0, VISIBLE_COUNT), [items]);
@@ -53,13 +67,13 @@ export function Canvas({
       .filter((path): path is string => Boolean(path));
 
     if (filePaths.length) {
-      await onAddPaths(filePaths);
+      await onAddPaths(filePaths, "drag_drop");
       return;
     }
 
     const text = event.dataTransfer.getData("text/plain");
     if (text) {
-      await onAddText(text);
+      await onAddText(text, undefined, "drag_drop");
     }
   }
 
@@ -81,7 +95,7 @@ export function Canvas({
 
     if (pastedFiles.length) {
       event.preventDefault();
-      await onAddPaths(pastedFiles);
+      await onAddPaths(pastedFiles, "paste");
       return;
     }
 
@@ -89,6 +103,7 @@ export function Canvas({
       event.preventDefault();
       setComposerMode("typing");
       setDraftText(text);
+      setDraftSourceKind("paste");
     }
   }
 
@@ -103,7 +118,7 @@ export function Canvas({
     }
 
     const paths = Array.isArray(selection) ? selection : [selection];
-    await onAddPaths(paths);
+    await onAddPaths(paths, "file_picker");
   }
 
   async function handlePasteButton() {
@@ -111,8 +126,10 @@ export function Canvas({
       const text = await navigator.clipboard.readText();
       setComposerMode("typing");
       setDraftText(text);
+      setDraftSourceKind("paste");
     } catch {
       setComposerMode("typing");
+      setDraftSourceKind("paste");
     }
   }
 
@@ -122,8 +139,9 @@ export function Canvas({
       return;
     }
 
-    await onAddText(text);
+    await onAddText(text, undefined, draftSourceKind);
     setDraftText("");
+    setDraftSourceKind("composer");
     setComposerMode("idle");
   }
 
@@ -151,12 +169,9 @@ export function Canvas({
     >
       <section className="hero">
         <div className="hero-copy-wrap">
-          <p className="eyebrow">Local-first shared canvas</p>
-          <h1>Drop anything. It shows up everywhere.</h1>
-          <p className="hero-copy">
-            Keep text, files, screenshots, and quick thoughts in one live stream without accounts
-            or extra friction.
-          </p>
+          <p className="eyebrow">{t("localFirstCanvas")}</p>
+          <h1>{t("heroTitle")}</h1>
+          <p className="hero-copy">{t("heroCopy")}</p>
         </div>
       </section>
 
@@ -164,10 +179,11 @@ export function Canvas({
         <div className="composer-card">
           <textarea
             className="composer-input"
-            placeholder="Type or paste text here. Ctrl+Enter sends it to the stream."
+            placeholder={t("composerPlaceholder")}
             value={draftText}
             onChange={(event) => {
               setComposerMode("typing");
+              setDraftSourceKind("composer");
               setDraftText(event.target.value);
             }}
             onFocus={() => setComposerMode("typing")}
@@ -181,11 +197,35 @@ export function Canvas({
           <div className="composer-actions">
             <div className="composer-actions-left">
               <button type="button" className="composer-tool" onClick={handlePickFiles}>
-                Add files
+                {t("addFiles")}
               </button>
               <button type="button" className="composer-tool" onClick={handlePasteButton}>
-                Paste
+                {t("paste")}
               </button>
+              <button type="button" className="composer-tool" onClick={onOpenBundleComposer}>
+                {t("createBundle")}
+              </button>
+              {items.length > 0 && (
+                <button
+                  type="button"
+                  className="composer-tool"
+                  onClick={() => {
+                    void confirmAction(t("clearStreamMessage"), {
+                      title: t("clearStream"),
+                      confirmLabel: t("clearStreamConfirm"),
+                      cancelLabel: t("cancel"),
+                      destructive: true,
+                    }).then((confirmed) => {
+                      if (confirmed) {
+                        void onDeleteAllItems();
+                      }
+                    });
+                  }}
+                  style={{ color: "#ff4d4d" }}
+                >
+                  {t("clearStream")}
+                </button>
+              )}
             </div>
             <button
               type="button"
@@ -193,13 +233,11 @@ export function Canvas({
               onClick={() => void handleSubmitText()}
               disabled={!draftText.trim()}
             >
-              Send to stream
+              {t("sendToStream")}
             </button>
           </div>
           <div className="composer-hint">
-            {composerMode === "typing"
-              ? "Text lands in the shared stream immediately after send."
-              : "Paste anywhere or start typing here."}
+            {composerMode === "typing" ? t("typingHint") : t("idleHint")}
           </div>
         </div>
       </section>
@@ -212,17 +250,20 @@ export function Canvas({
             onCopyText={onCopyText}
             onDeleteItem={onDeleteItem}
             onDownloadItem={onDownloadItem}
+            onOpenItem={onOpenItem}
+            onUpdateIntentState={onUpdateIntentState}
+            canSendToDevice={canSendToDevice}
           />
         ))}
         {!visibleItems.length ? (
           <div className="empty-state">
-            <p>Nothing here yet.</p>
-            <span>Drop a file, paste a screenshot, or send text from the composer above.</span>
+            <p>{t("emptyTitle")}</p>
+            <span>{t("emptyCopy")}</span>
           </div>
         ) : null}
       </section>
 
-      {isBusy ? <div className="busy-indicator">Importing...</div> : null}
+      {isBusy ? <div className="busy-indicator">{t("importing")}</div> : null}
     </main>
   );
 }

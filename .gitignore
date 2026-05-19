@@ -13,6 +13,7 @@ private-components/*/node_modules/
 private-components/*/.env
 private-components/*/.env.local
 private-components/*/.next/
+private-components/*/.data/
 .publication/
 .gemini/
 .public-release/
