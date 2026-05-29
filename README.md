@@ -104,12 +104,6 @@ Generate checksums:
 ./scripts/generate-checksums.ps1
 ```
 
-Prepare a sanitized public GitHub repo copy:
-
-```powershell
-./scripts/prepare-public-repo.ps1
-```
-
 ## Release artifacts
 
 Windows release bundles are emitted under:
