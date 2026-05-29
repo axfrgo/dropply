@@ -189,9 +189,9 @@ const MESSAGES = {
     bundleComposeHint:
       "Package one transcript, the files we referenced, and any supporting docs into a single Dropply bundle.",
     bundleTitleLabel: "Bundle title",
-    bundleTitlePlaceholder: "ChatGPT session review",
+    bundleTitlePlaceholder: "Research session review",
     bundleSourceLabel: "Source app",
-    bundleSourcePlaceholder: "ChatGPT, Perplexity, VS Code...",
+    bundleSourcePlaceholder: "Browser, docs, VS Code...",
     bundleSourceUrlLabel: "Source URL (optional)",
     bundleSourceUrlPlaceholder: "https://...",
     bundleLoadTranscript: "Load transcript file",
@@ -407,9 +407,9 @@ const MESSAGES = {
     bundleComposeHint:
       "Regroupez une transcription, les fichiers references et les documents utiles dans un seul bundle Dropply.",
     bundleTitleLabel: "Titre du bundle",
-    bundleTitlePlaceholder: "Revue de session ChatGPT",
+    bundleTitlePlaceholder: "Revue de session de recherche",
     bundleSourceLabel: "Application source",
-    bundleSourcePlaceholder: "ChatGPT, Perplexity, VS Code...",
+    bundleSourcePlaceholder: "Navigateur, docs, VS Code...",
     bundleSourceUrlLabel: "URL source (optionnelle)",
     bundleSourceUrlPlaceholder: "https://...",
     bundleLoadTranscript: "Charger un fichier de transcription",

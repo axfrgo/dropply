@@ -2,7 +2,7 @@
 name = "dropply"
 version = "1.0.0"
 description = "Dropply desktop shell"
-authors = ["OpenAI"]
+authors = ["Dropply"]
 edition = "2021"
 default-run = "dropply"
 

@@ -2,7 +2,7 @@
 
 Dropply is a premium local-first cross-device intent layer for text, files, images, links, and fast device handoff. The desktop app is built with Tauri, React, and Rust, with SQLite metadata storage, blob-backed local persistence, and sync foundations designed for WebRTC-first transfer with relay fallback.
 
-The v1 wedge is **Smart Drops**: every item in the stream can carry where it came from, a local label/summary, suggested next actions, target-device intent, and lifecycle state. Smart Drops are additive metadata on the existing Dropply stream, not a rebrand and not a cloud-AI dependency.
+The v1 wedge is **Smart Drops**: every item in the stream can carry where it came from, a local label/summary, suggested next actions, target-device intent, and lifecycle state. Smart Drops are additive metadata on the existing Dropply stream.
 
 ## Product
 
@@ -20,8 +20,7 @@ The v1 wedge is **Smart Drops**: every item in the stream can carry where it cam
 - `src/`: React desktop UI
 - `src-tauri/`: Tauri host, Rust storage layer, CLI/TUI, commands, and desktop packaging config
 - `relay-server/`: optional relay service foundation
-- `docs/`: release, security, and open-core documentation
-- `private-components/`: documentation-only placeholder for proprietary modules and hosted services
+- `docs/`: release, CLI, and open-core documentation
 
 ## Open-core model
 
@@ -45,13 +44,8 @@ Private / hosted tier:
 - hosted APIs, billing, and admin services
 
 See [OPEN_CORE.md](docs/OPEN_CORE.md) for the current boundary.
-See [PLATFORM_ARCHITECTURE.md](docs/PLATFORM_ARCHITECTURE.md) for the hosted/private architecture direction.
-See [AUTH_AND_IDENTITY.md](docs/AUTH_AND_IDENTITY.md) for the account model.
-See [PLANS_AND_LIMITS.md](docs/PLANS_AND_LIMITS.md) for the free vs paid hosted limits plan.
-See [PRODUCTION_READY.md](docs/PRODUCTION_READY.md) for the production launch checklist.
-See [GITHUB_PUBLICATION.md](docs/GITHUB_PUBLICATION.md) for the public-vs-private repo split.
+See [DROPPLY_CLI_QUICKSTART.txt](docs/DROPPLY_CLI_QUICKSTART.txt) for CLI/TUI setup.
 See [CODE_SIGNING.md](docs/CODE_SIGNING.md) for Windows signing setup.
-See [PRIVACY_POLICY.md](docs/PRIVACY_POLICY.md) and [TERMS_OF_SERVICE.md](docs/TERMS_OF_SERVICE.md) for hosted-service legal baseline.
 
 ## Release status
 
@@ -72,7 +66,7 @@ Included:
 Still in progress:
 
 - automatic cross-device routing decisions
-- cloud AI summarization and comparison adapters
+- richer hosted continuity adapters
 - multi-stream workspaces
 - end-to-end hosted private tier
 

@@ -700,7 +700,7 @@ fn print_help(output_mode: OutputMode) -> AppResult<()> {
     println!("  dropply-cli send \"C:\\Users\\alexj\\Videos\\clip.mp4\"");
     println!("  dropply-cli send-text");
     println!("  Get-Content .\\notes.txt | dropply-cli send-text");
-    println!("  dropply-cli send-bundle --title \"ChatGPT session\" --source ChatGPT --transcript-file .\\conversation.md --file src\\components\\Canvas.tsx --attachment .\\summary.md");
+    println!("  dropply-cli send-bundle --title \"Research session\" --source Browser --transcript-file .\\conversation.md --file src\\components\\Canvas.tsx --attachment .\\summary.md");
     println!("  dropply-cli status --watch");
     println!("  dropply-cli tui");
 

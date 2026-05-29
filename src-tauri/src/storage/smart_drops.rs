@@ -330,7 +330,7 @@ mod tests {
     fn classifies_browser_bundle_with_source() {
         let mut item = base_item(
             ItemType::File,
-            Some("ChatGPT conversation.dropplybundle"),
+            Some("Browser research.dropplybundle"),
             Some(CONVERSATION_BUNDLE_MIME_TYPE),
         );
         apply_new_item_metadata(
@@ -338,14 +338,14 @@ mod tests {
             SmartDropSeed {
                 source_kind: SourceKind::BrowserShare,
                 provenance: TrustProvenance::BrowserExtension,
-                source_app: Some("ChatGPT".to_string()),
-                source_url: Some("https://chatgpt.com/".to_string()),
+                source_app: Some("Browser".to_string()),
+                source_url: Some("https://example.com/research".to_string()),
                 source_title: Some("Launch review".to_string()),
             },
         );
 
         let semantic = item.semantic_context.expect("semantic context");
-        assert_eq!(semantic.primary_label, "ChatGPT bundle");
+        assert_eq!(semantic.primary_label, "Browser bundle");
         assert!(semantic.tags.iter().any(|tag| tag == "browser"));
         assert!(item
             .suggested_actions
